@@ -1,81 +1,150 @@
-// routes/dashboard.js
-// Rotas da área do usuário (todas protegidas por JWT).
-//
-// GET  /api/me           → dados do usuário logado
-// GET  /api/me/payments  → pagamentos registrados pelo admin para este usuário
-// GET  /api/me/clicks    → total de cliques do afiliado
+<script>
+  const TOKEN = localStorage.getItem("token");
 
-const express     = require("express");
-const router      = express.Router();
-const requireAuth = require("../middleware/requireAuth");
-const supabase    = require("../supabase");
+  if (!TOKEN) {
+    window.location.href = "/login";
+  }
 
-// ── GET /api/me ──────────────────────────────────────────────
-router.get("/me", requireAuth, async (req, res) => {
-  if (!supabase) return res.status(500).json({ erro: "Banco não configurado." });
+  const HEADERS = {
+    "Content-Type": "application/json",
+    "Authorization": "Bearer " + TOKEN,
+  };
 
-  try {
-    const { data, error } = await supabase
-      .from("users")
-      .select("id, email, affiliate, pix_key, created_at")
-      .eq("id", req.userId)
-      .single();
+  function fmtData(iso) {
+    if (!iso) return "—";
+    return new Date(iso).toLocaleDateString("pt-BR");
+  }
 
-    if (error || !data) return res.status(404).json({ erro: "Usuário não encontrado." });
-
-    const baseUrl = process.env.BASE_URL || "";
-    res.json({
-      id:         data.id,
-      email:      data.email,
-      affiliate:  data.affiliate,
-      pix_key:    data.pix_key,
-      created_at: data.created_at,
-      link:       `${baseUrl}/a/${data.affiliate}`,
+  function fmtMoeda(v) {
+    return Number(v || 0).toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL"
     });
-  } catch (e) {
-    console.error("[api/me]", e.message);
-    res.status(500).json({ erro: e.message });
   }
-});
 
-// ── GET /api/me/payments ─────────────────────────────────────
-router.get("/me/payments", requireAuth, async (req, res) => {
-  if (!supabase) return res.status(500).json({ erro: "Banco não configurado." });
-
-  try {
-    const { data, error } = await supabase
-      .from("payments")
-      .select("id, amount, description, status, created_at")
-      .eq("user_id", req.userId)
-      .order("created_at", { ascending: false });
-
-    if (error) throw error;
-
-    res.json({ payments: data || [] });
-  } catch (e) {
-    console.error("[api/me/payments]", e.message);
-    res.status(500).json({ erro: e.message });
+  function sair() {
+    localStorage.removeItem("token");
+    window.location.href = "/login";
   }
-});
 
-// ── GET /api/me/clicks ───────────────────────────────────────
-router.get("/me/clicks", requireAuth, async (req, res) => {
-  if (!supabase) return res.status(500).json({ erro: "Banco não configurado." });
+  async function copiarLink() {
+    const link = document.getElementById("link-afiliado").textContent;
+    const btn = document.querySelector(".btn-copy");
 
-  try {
-    const { data, error } = await supabase
-      .from("clicks")
-      .select("id, created_at")
-      .eq("affiliate", req.userAffiliate)
-      .order("created_at", { ascending: false });
-
-    if (error) throw error;
-
-    res.json({ total: (data || []).length, clicks: data || [] });
-  } catch (e) {
-    console.error("[api/me/clicks]", e.message);
-    res.status(500).json({ erro: e.message });
+    try {
+      await navigator.clipboard.writeText(link);
+      btn.textContent = "✓ Copiado!";
+      setTimeout(() => btn.textContent = "Copiar", 2000);
+    } catch {
+      alert("Não foi possível copiar o link.");
+    }
   }
-});
 
-module.exports = router;
+  async function fetchSeguro(url) {
+    const r = await fetch(url, { headers: HEADERS });
+
+    if (r.status === 401) {
+      sair();
+      return null;
+    }
+
+    if (!r.ok) {
+      console.error("Erro API:", url, r.status);
+      return null;
+    }
+
+    return await r.json();
+  }
+
+  async function carregarDados() {
+    try {
+      const me = await fetchSeguro("/api/me");
+      if (!me) return;
+
+      document.getElementById("hdr-email").textContent = me.email || "—";
+
+      document.getElementById("link-afiliado").textContent =
+        me.link || window.location.origin + "/a/" + (me.affiliate || "");
+
+      document.getElementById("info-grid").innerHTML = `
+        <div class="info-row">
+          <span class="info-label">E-mail</span>
+          <span class="info-value">${me.email || "—"}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Chave Pix</span>
+          <span class="info-value">${me.pix_key || "—"}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Afiliado</span>
+          <span class="info-value">${me.affiliate || "—"}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Membro desde</span>
+          <span class="info-value">${fmtData(me.created_at)}</span>
+        </div>
+      `;
+
+      const cliques = await fetchSeguro("/api/me/clicks");
+      document.getElementById("c-cliques").textContent =
+        cliques?.total ?? 0;
+
+      const pag = await fetchSeguro("/api/me/payments");
+      const payments = pag?.payments || [];
+
+      const tbody = document.getElementById("tbody-pagamentos");
+
+      if (payments.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="4">
+              <div class="empty">
+                <div class="icon">💳</div>
+                <p>Nenhum pagamento registrado ainda</p>
+              </div>
+            </td>
+          </tr>
+        `;
+
+        document.getElementById("c-recebido").textContent = fmtMoeda(0);
+        document.getElementById("c-pendente").textContent = fmtMoeda(0);
+        return;
+      }
+
+      tbody.innerHTML = payments.map(p => {
+        const status = (p.status || "").toLowerCase();
+
+        return `
+          <tr>
+            <td>${p.description || "—"}</td>
+            <td class="valor">${fmtMoeda(p.amount)}</td>
+            <td>
+              <span class="status-badge ${status}">
+                ${status === "pago" ? "✓ Pago" : "⏳ Pendente"}
+              </span>
+            </td>
+            <td>${fmtData(p.created_at)}</td>
+          </tr>
+        `;
+      }).join("");
+
+      const totalPago = payments
+        .filter(p => (p.status || "").toLowerCase() === "pago")
+        .reduce((s, p) => s + Number(p.amount || 0), 0);
+
+      const totalPendente = payments
+        .filter(p => (p.status || "").toLowerCase() === "pendente")
+        .reduce((s, p) => s + Number(p.amount || 0), 0);
+
+      document.getElementById("c-recebido").textContent = fmtMoeda(totalPago);
+      document.getElementById("c-pendente").textContent = fmtMoeda(totalPendente);
+      document.getElementById("total-pago").textContent = fmtMoeda(totalPago);
+      document.getElementById("tfoot-total").style.display = "";
+
+    } catch (e) {
+      console.error("Erro geral:", e);
+    }
+  }
+
+  carregarDados();
+</script>
