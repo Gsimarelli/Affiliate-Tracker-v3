@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Entrar — Affiliate Tracker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #0d1117;
+      --surface: #161b22;
+      --border:  #30363d;
+      --text:    #e6edf3;
+      --muted:   #7d8590;
+      --green:   #25D366;
+      --red:     #f85149;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 40px 36px;
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .logo h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--green);
+    }
+
+    .logo p {
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-top: 4px;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 28px;
+    }
+
+    .tab {
+      flex: 1;
+      text-align: center;
+      padding: 10px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all .2s;
+    }
+
+    .tab.active {
+      color: var(--green);
+      border-bottom-color: var(--green);
+    }
+
+    /* Formulários */
+    .form { display: none; }
+    .form.active { display: block; }
+
+    .field {
+      margin-bottom: 16px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-bottom: 6px;
+    }
+
+    .field input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      padding: 11px 14px;
+      outline: none;
+      transition: border-color .2s;
+    }
+
+    .field input:focus { border-color: var(--green); }
+
+    .field .hint {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 5px;
+    }
+
+    .field .link-preview {
+      font-size: 0.75rem;
+      color: var(--green);
+      margin-top: 5px;
+      font-family: monospace;
+      opacity: 0;
+      transition: opacity .2s;
+    }
+
+    .field .link-preview.show { opacity: 1; }
+
+    button[type="submit"] {
+      width: 100%;
+      padding: 13px;
+      background: var(--green);
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: opacity .2s;
+    }
+
+    button[type="submit"]:hover { opacity: .88; }
+    button[type="submit"]:disabled { opacity: .5; cursor: not-allowed; }
+
+    .msg {
+      padding: 11px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    .msg.erro  { background: rgba(248,81,73,.12); border: 1px solid rgba(248,81,73,.3); color: var(--red); display: block; }
+    .msg.ok    { background: rgba(37,211,102,.1); border: 1px solid rgba(37,211,102,.3); color: var(--green); display: block; }
+  </style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">
+    <h1>📡 Affiliate Tracker</h1>
+    <p>Entre na sua conta ou crie uma nova</p>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="mudarAba('login')">Entrar</div>
+    <div class="tab" onclick="mudarAba('cadastro')">Criar conta</div>
+  </div>
+
+  <!-- LOGIN -->
+  <div class="form active" id="form-login">
+    <div class="msg" id="msg-login"></div>
+    <div class="field">
+      <label>E-mail</label>
+      <input type="email" id="login-email" placeholder="seu@email.com" />
+    </div>
+    <div class="field">
+      <label>Senha</label>
+      <input type="password" id="login-senha" placeholder="••••••••" />
+    </div>
+    <button type="submit" id="btn-login" onclick="fazerLogin()">Entrar</button>
+  </div>
+
+  <!-- CADASTRO -->
+  <div class="form" id="form-cadastro">
+    <div class="msg" id="msg-cadastro"></div>
+    <div class="field">
+      <label>E-mail</label>
+      <input type="email" id="cad-email" placeholder="seu@email.com" />
+    </div>
+    <div class="field">
+      <label>Senha</label>
+      <input type="password" id="cad-senha" placeholder="Mínimo 6 caracteres" />
+    </div>
+    <div class="field">
+      <label>Chave Pix</label>
+      <input type="text" id="cad-pix" placeholder="CPF, e-mail, telefone ou chave aleatória" />
+      <div class="hint">Usaremos essa chave para realizar seus pagamentos.</div>
+    </div>
+    <div class="field">
+      <label>Nome do seu link de afiliado</label>
+      <input type="text" id="cad-afiliado" placeholder="ex: joaosilva" oninput="previewLink(this.value)" />
+      <div class="hint">Somente letras, números, hífen ou underscore (2–30 caracteres).</div>
+      <div class="link-preview" id="link-preview">Seu link: /a/...</div>
+    </div>
+    <button type="submit" id="btn-cadastro" onclick="fazerCadastro()">Criar conta</button>
+  </div>
+</div>
+
+<script>
+  // Se já estiver logado, vai direto para o dashboard
+  if (localStorage.getItem("token")) {
+    window.location.href = "/dashboard";
+  }
+
+  function mudarAba(aba) {
+    document.querySelectorAll(".tab").forEach((t, i) => {
+      t.classList.toggle("active", (i === 0 && aba === "login") || (i === 1 && aba === "cadastro"));
+    });
+    document.getElementById("form-login").classList.toggle("active", aba === "login");
+    document.getElementById("form-cadastro").classList.toggle("active", aba === "cadastro");
+  }
+
+  function previewLink(val) {
+    const el = document.getElementById("link-preview");
+    const clean = val.toLowerCase().replace(/[^a-z0-9_-]/g, "");
+    if (clean.length >= 2) {
+      el.textContent = "Seu link: " + window.location.origin + "/a/" + clean;
+      el.classList.add("show");
+    } else {
+      el.classList.remove("show");
+    }
+  }
+
+  function showMsg(id, txt, tipo) {
+    const el = document.getElementById(id);
+    el.textContent = txt;
+    el.className = "msg " + tipo;
+  }
+
+  async function fazerLogin() {
+    const email = document.getElementById("login-email").value.trim();
+    const senha = document.getElementById("login-senha").value;
+    const btn   = document.getElementById("btn-login");
+
+    if (!email || !senha) return showMsg("msg-login", "Preencha todos os campos.", "erro");
+
+    btn.disabled = true;
+    btn.textContent = "Entrando...";
+
+    try {
+      const r = await fetch("/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password: senha }),
+      });
+      const d = await r.json();
+
+      if (!r.ok) {
+        showMsg("msg-login", d.erro || "Erro ao fazer login.", "erro");
+      } else {
+        localStorage.setItem("token", d.token);
+        window.location.href = "/dashboard";
+      }
+    } catch (e) {
+      showMsg("msg-login", "Erro de conexão.", "erro");
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Entrar";
+    }
+  }
+
+  async function fazerCadastro() {
+    const email     = document.getElementById("cad-email").value.trim();
+    const senha     = document.getElementById("cad-senha").value;
+    const pix       = document.getElementById("cad-pix").value.trim();
+    const afiliado  = document.getElementById("cad-afiliado").value.trim().toLowerCase();
+    const btn       = document.getElementById("btn-cadastro");
+
+    if (!email || !senha || !pix || !afiliado) {
+      return showMsg("msg-cadastro", "Preencha todos os campos.", "erro");
+    }
+
+    btn.disabled = true;
+    btn.textContent = "Criando conta...";
+
+    try {
+      const r = await fetch("/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password: senha, pix_key: pix, affiliate: afiliado }),
+      });
+      const d = await r.json();
+
+      if (!r.ok) {
+        showMsg("msg-cadastro", d.erro || "Erro ao criar conta.", "erro");
+      } else {
+        localStorage.setItem("token", d.token);
+        window.location.href = "/dashboard";
+      }
+    } catch (e) {
+      showMsg("msg-cadastro", "Erro de conexão.", "erro");
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Criar conta";
+    }
+  }
+
+  // Submete com Enter
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Enter") return;
+    if (document.getElementById("form-login").classList.contains("active")) fazerLogin();
+    else fazerCadastro();
+  });
+</script>
+</body>
+</html>
