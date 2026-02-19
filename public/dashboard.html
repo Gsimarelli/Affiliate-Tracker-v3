@@ -84,7 +84,7 @@
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 14px;
-      margin-bottom: 28px;
+      margin-bottom: 16px;
     }
 
     .card {
@@ -114,6 +114,35 @@
       font-size: 0.75rem;
       color: var(--muted);
       margin-top: 5px;
+    }
+
+    /* AVISO */
+    .aviso {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: rgba(240,165,0,0.07);
+      border: 1px solid rgba(240,165,0,0.25);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      margin-bottom: 24px;
+    }
+
+    .aviso-icon {
+      font-size: 1.1rem;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .aviso-texto {
+      font-size: 0.84rem;
+      color: #c9a227;
+      line-height: 1.55;
+    }
+
+    .aviso-texto strong {
+      color: var(--yellow);
+      font-weight: 700;
     }
 
     /* LINK BOX */
@@ -327,7 +356,8 @@
 </header>
 
 <main>
-  <!-- CARDS RESUMO -->
+
+  <!-- CARDS RESUMO — apenas 2 cards agora -->
   <div class="cards">
     <div class="card">
       <div class="card-label">Total de cliques</div>
@@ -339,11 +369,15 @@
       <div class="card-value" id="c-recebido">—</div>
       <div class="card-sub">Pagamentos com status "pago"</div>
     </div>
-    <div class="card">
-      <div class="card-label">A receber</div>
-      <div class="card-value" id="c-pendente" style="color:var(--yellow)">—</div>
-      <div class="card-sub">Pagamentos pendentes</div>
-    </div>
+  </div>
+
+  <!-- AVISO: clique ≠ pagamento -->
+  <div class="aviso">
+    <span class="aviso-icon">⚠️</span>
+    <span class="aviso-texto">
+      <strong>Atenção:</strong> nem todo clique gera pagamento. A comissão é contabilizada somente quando a pessoa indicada
+      <strong>entrar efetivamente no grupo</strong>. O número de cliques acima é apenas uma referência de alcance do seu link.
+    </span>
   </div>
 
   <!-- LINK DE AFILIADO -->
@@ -385,12 +419,12 @@
       </tfoot>
     </table>
   </div>
+
 </main>
 
 <script>
   const TOKEN = localStorage.getItem("token");
 
-  // Se não estiver logado, manda para o login
   if (!TOKEN) {
     window.location.href = "/login";
   }
@@ -427,7 +461,6 @@
 
   async function carregarDados() {
     try {
-      // Dados do usuário
       const rMe = await fetch("/api/me", { headers: HEADERS });
       if (rMe.status === 401) { sair(); return; }
       const me = await rMe.json();
@@ -454,12 +487,10 @@
         </div>
       `;
 
-      // Cliques
       const rCliques = await fetch("/api/me/clicks", { headers: HEADERS });
       const cliques  = await rCliques.json();
       document.getElementById("c-cliques").textContent = cliques.total ?? 0;
 
-      // Pagamentos
       const rPag = await fetch("/api/me/payments", { headers: HEADERS });
       const pag  = await rPag.json();
       const payments = pag.payments || [];
@@ -467,6 +498,7 @@
       if (payments.length === 0) {
         document.getElementById("tbody-pagamentos").innerHTML =
           `<tr><td colspan="4"><div class="empty"><div class="icon">💳</div><p>Nenhum pagamento registrado ainda</p></div></td></tr>`;
+        document.getElementById("c-recebido").textContent = fmtMoeda(0);
       } else {
         document.getElementById("tbody-pagamentos").innerHTML = payments.map(p => `
           <tr>
@@ -484,12 +516,8 @@
         const totalPago = payments
           .filter(p => p.status === "pago")
           .reduce((s, p) => s + Number(p.amount), 0);
-        const totalPendente = payments
-          .filter(p => p.status === "pendente")
-          .reduce((s, p) => s + Number(p.amount), 0);
 
         document.getElementById("c-recebido").textContent = fmtMoeda(totalPago);
-        document.getElementById("c-pendente").textContent = fmtMoeda(totalPendente);
         document.getElementById("total-pago").textContent = fmtMoeda(totalPago);
         document.getElementById("tfoot-total").style.display = "";
       }
