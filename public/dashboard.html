@@ -4,322 +4,182 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Minha Área — Afiliados IA dos Preços</title>
+
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:       #0d1117;
-      --surface:  #161b22;
-      --surface2: #21262d;
-      --border:   #30363d;
-      --text:     #e6edf3;
-      --muted:    #7d8590;
-      --green:    #25D366;
-      --green2:   #1a9e6b;
-      --yellow:   #f0a500;
-      --red:      #f85149;
-      --radius:   10px;
+      --bg:#0d1117;
+      --surface:#161b22;
+      --surface2:#21262d;
+      --border:#30363d;
+      --text:#e6edf3;
+      --muted:#7d8590;
+      --green:#25D366;
+      --yellow:#f0a500;
+      --red:#f85149;
+      --radius:10px;
     }
 
     body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Inter', sans-serif;
-      min-height: 100vh;
-      font-size: 14px;
+      background:var(--bg);
+      color:var(--text);
+      font-family:'Inter',sans-serif;
+      min-height:100vh;
+      font-size:14px;
     }
 
-    /* HEADER */
     header {
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      padding: 14px 28px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
+      background:var(--surface);
+      border-bottom:1px solid var(--border);
+      padding:14px 28px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      flex-wrap:wrap;
     }
 
     .logo {
-      font-size: 1rem;
-      font-weight: 800;
-      color: var(--green);
+      font-weight:800;
+      color:var(--green);
     }
 
     .header-right {
-      display: flex;
-      align-items: center;
-      gap: 16px;
+      display:flex;
+      align-items:center;
+      gap:16px;
     }
 
-    .user-email {
-      font-size: 0.82rem;
-      color: var(--muted);
-    }
+    .user-email { color:var(--muted); font-size:.82rem; }
 
     .btn-sair {
-      padding: 6px 14px;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-      background: transparent;
-      color: var(--muted);
-      font-size: 0.82rem;
-      cursor: pointer;
-      transition: all .15s;
+      padding:6px 14px;
+      border-radius:6px;
+      border:1px solid var(--border);
+      background:transparent;
+      color:var(--muted);
+      cursor:pointer;
+      transition:.2s;
     }
 
-    .btn-sair:hover { border-color: var(--red); color: var(--red); }
+    .btn-sair:hover { border-color:var(--red); color:var(--red); }
 
-    /* MAIN */
     main {
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 32px 20px 60px;
+      max-width:860px;
+      margin:0 auto;
+      padding:32px 20px 60px;
     }
 
-    /* CARDS */
     .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 14px;
-      margin-bottom: 28px;
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+      gap:14px;
+      margin-bottom:20px;
     }
 
     .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 20px;
-      border-top: 3px solid var(--green);
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:20px;
+      border-top:3px solid var(--green);
     }
 
     .card-label {
-      font-size: 0.68rem;
-      text-transform: uppercase;
-      letter-spacing: .1em;
-      color: var(--muted);
-      margin-bottom: 8px;
+      font-size:.68rem;
+      text-transform:uppercase;
+      letter-spacing:.1em;
+      color:var(--muted);
+      margin-bottom:8px;
     }
 
     .card-value {
-      font-size: 1.8rem;
-      font-weight: 800;
-      color: var(--green);
-      line-height: 1;
+      font-size:1.8rem;
+      font-weight:800;
+      color:var(--green);
     }
 
     .card-sub {
-      font-size: 0.75rem;
-      color: var(--muted);
-      margin-top: 5px;
+      font-size:.75rem;
+      color:var(--muted);
+      margin-top:5px;
     }
 
-    /* LINK BOX */
+    /* AVISO IMPORTANTE */
+    .info-importante {
+      background:rgba(240,165,0,.08);
+      border:1px solid rgba(240,165,0,.3);
+      border-radius:var(--radius);
+      padding:16px 18px;
+      margin-bottom:28px;
+      font-size:.85rem;
+      line-height:1.6;
+    }
+
+    .info-importante strong {
+      color:var(--yellow);
+    }
+
     .link-box {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 20px 24px;
-      margin-bottom: 24px;
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:20px 24px;
+      margin-bottom:24px;
     }
 
     .link-title {
-      font-size: 0.72rem;
-      text-transform: uppercase;
-      letter-spacing: .1em;
-      color: var(--muted);
-      font-weight: 700;
-      margin-bottom: 12px;
+      font-size:.72rem;
+      text-transform:uppercase;
+      letter-spacing:.1em;
+      color:var(--muted);
+      margin-bottom:12px;
+      font-weight:700;
     }
 
     .link-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 12px 14px;
-      flex-wrap: wrap;
+      display:flex;
+      gap:12px;
+      background:var(--bg);
+      border:1px solid var(--border);
+      border-radius:8px;
+      padding:12px 14px;
+      flex-wrap:wrap;
     }
 
     .link-url {
-      flex: 1;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.85rem;
-      color: var(--green);
-      word-break: break-all;
+      flex:1;
+      font-family:'JetBrains Mono',monospace;
+      color:var(--green);
+      word-break:break-all;
     }
 
     .btn-copy {
-      padding: 7px 16px;
-      background: var(--green);
-      color: #000;
-      border: none;
-      border-radius: 6px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      cursor: pointer;
-      flex-shrink: 0;
-      transition: opacity .15s;
+      padding:7px 16px;
+      background:var(--green);
+      border:none;
+      border-radius:6px;
+      font-weight:700;
+      cursor:pointer;
     }
 
-    .btn-copy:hover { opacity: .85; }
-
-    .link-hint {
-      font-size: 0.78rem;
-      color: var(--muted);
-      margin-top: 10px;
-    }
-
-    /* SEÇÃO */
     .section-title {
-      font-size: 0.72rem;
-      text-transform: uppercase;
-      letter-spacing: .1em;
-      color: var(--muted);
-      font-weight: 700;
-      margin-bottom: 12px;
-    }
-
-    /* TABELA DE PAGAMENTOS */
-    .tabela-wrap {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
-      margin-bottom: 28px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.83rem;
-    }
-
-    thead { background: var(--surface2); }
-
-    thead th {
-      padding: 10px 14px;
-      text-align: left;
-      font-size: 0.68rem;
-      text-transform: uppercase;
-      letter-spacing: .1em;
-      color: var(--muted);
-      font-weight: 600;
-      border-bottom: 1px solid var(--border);
-    }
-
-    tbody tr { border-bottom: 1px solid var(--border); }
-    tbody tr:last-child { border-bottom: none; }
-    tbody tr:hover { background: var(--surface2); }
-    tbody td { padding: 11px 14px; }
-
-    .status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 3px 10px;
-      border-radius: 99px;
-      font-size: 0.72rem;
-      font-weight: 600;
-    }
-
-    .status-badge.pago {
-      background: rgba(37,211,102,.12);
-      color: var(--green);
-      border: 1px solid rgba(37,211,102,.25);
-    }
-
-    .status-badge.pendente {
-      background: rgba(240,165,0,.1);
-      color: var(--yellow);
-      border: 1px solid rgba(240,165,0,.25);
-    }
-
-    .valor {
-      font-weight: 700;
-      color: var(--text);
-      font-family: 'JetBrains Mono', monospace;
-    }
-
-    .total-row {
-      background: var(--surface2);
-      border-top: 2px solid var(--border);
-    }
-
-    .total-row td {
-      font-weight: 700;
-      padding: 12px 14px;
-    }
-
-    /* ESTADO VAZIO */
-    .empty {
-      text-align: center;
-      padding: 40px 20px;
-      color: var(--muted);
-    }
-
-    .empty .icon { font-size: 2rem; margin-bottom: 8px; }
-
-    /* DADOS PESSOAIS */
-    .info-grid {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
-      margin-bottom: 28px;
-    }
-
-    .info-row {
-      display: flex;
-      padding: 13px 20px;
-      border-bottom: 1px solid var(--border);
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-
-    .info-row:last-child { border-bottom: none; }
-
-    .info-label {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: .08em;
-      color: var(--muted);
-      font-weight: 600;
-      min-width: 110px;
-      padding-top: 2px;
-    }
-
-    .info-value {
-      font-size: 0.88rem;
-      color: var(--text);
-      word-break: break-all;
-    }
-
-    .spin {
-      display: inline-block;
-      width: 24px; height: 24px;
-      border: 3px solid var(--border);
-      border-top-color: var(--green);
-      border-radius: 50%;
-      animation: spin .7s linear infinite;
-    }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    @media (max-width: 600px) {
-      header { padding: 14px 16px; }
-      main   { padding: 20px 14px 40px; }
+      font-size:.72rem;
+      text-transform:uppercase;
+      letter-spacing:.1em;
+      color:var(--muted);
+      margin-bottom:12px;
+      font-weight:700;
     }
   </style>
 </head>
+
 <body>
 
 <header>
-  <div class="logo">📡 Afiliado IA dos Preços</div>
+  <div class="logo">🔥 Afiliado IA dos Preços</div>
   <div class="header-right">
     <span class="user-email" id="hdr-email">—</span>
     <button class="btn-sair" onclick="sair()">Sair</button>
@@ -327,18 +187,21 @@
 </header>
 
 <main>
-  <!-- CARDS RESUMO -->
+
+  <!-- CARDS -->
   <div class="cards">
     <div class="card">
       <div class="card-label">Total de cliques</div>
       <div class="card-value" id="c-cliques">—</div>
-      <div class="card-sub">No seu link de afiliado</div>
+      <div class="card-sub">Acessos ao seu link</div>
     </div>
+
     <div class="card">
       <div class="card-label">Total recebido</div>
       <div class="card-value" id="c-recebido">—</div>
-      <div class="card-sub">Pagamentos com status "pago"</div>
+      <div class="card-sub">Pagamentos confirmados</div>
     </div>
+
     <div class="card">
       <div class="card-label">A receber</div>
       <div class="card-value" id="c-pendente" style="color:var(--yellow)">—</div>
@@ -346,160 +209,25 @@
     </div>
   </div>
 
-  <!-- LINK DE AFILIADO -->
-  <div class="link-box">
-    <div class="link-title">🔗 Seu link de afiliado</div>
-    <div class="link-row">
-      <span class="link-url" id="link-afiliado">carregando...</span>
-      <button class="btn-copy" onclick="copiarLink()">Copiar</button>
-    </div>
-    <p class="link-hint">Compartilhe este link. Cada clique é registrado automaticamente no sistema.</p>
+  <!-- AVISO -->
+  <div class="info-importante">
+    <strong>⚠️ Informação importante:</strong><br><br>
+    • O número de <b>cliques</b> representa apenas acessos ao seu link, e não necessariamente participantes que ingressaram no grupo.<br>
+    • Ao final de cada mês é realizado um <b>balanço oficial</b> comparando cliques com usuários reais que entraram.<br>
+    • Cada usuário confirmado tem valor de <b>R$ 0,65</b>.
   </div>
 
-  <!-- DADOS PESSOAIS -->
-  <div class="section-title">👤 Meus dados</div>
-  <div class="info-grid" id="info-grid">
-    <div class="empty"><div class="spin"></div></div>
-  </div>
-
-  <!-- PAGAMENTOS -->
-  <div class="section-title">💰 Meus pagamentos</div>
-  <div class="tabela-wrap">
-    <table>
-      <thead>
-        <tr>
-          <th>Descrição</th>
-          <th>Valor</th>
-          <th>Status</th>
-          <th>Data</th>
-        </tr>
-      </thead>
-      <tbody id="tbody-pagamentos">
-        <tr><td colspan="4"><div class="empty"><div class="spin"></div></div></td></tr>
-      </tbody>
-      <tfoot id="tfoot-total" style="display:none">
-        <tr class="total-row">
-          <td colspan="2">Total pago</td>
-          <td colspan="2" class="valor" id="total-pago">R$ 0,00</td>
-        </tr>
-      </tfoot>
-    </table>
-  </div>
 </main>
 
 <script>
   const TOKEN = localStorage.getItem("token");
-
-  // Se não estiver logado, manda para o login
-  if (!TOKEN) {
-    window.location.href = "/login";
-  }
-
-  const HEADERS = {
-    "Content-Type": "application/json",
-    "Authorization": "Bearer " + TOKEN,
-  };
-
-  function fmtData(iso) {
-    if (!iso) return "—";
-    return new Date(iso).toLocaleDateString("pt-BR", {
-      day: "2-digit", month: "2-digit", year: "numeric"
-    });
-  }
-
-  function fmtMoeda(v) {
-    return Number(v).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-  }
+  if (!TOKEN) window.location.href = "/login";
 
   function sair() {
     localStorage.removeItem("token");
     window.location.href = "/login";
   }
-
-  function copiarLink() {
-    const link = document.getElementById("link-afiliado").textContent;
-    navigator.clipboard.writeText(link).then(() => {
-      const btn = document.querySelector(".btn-copy");
-      btn.textContent = "✓ Copiado!";
-      setTimeout(() => btn.textContent = "Copiar", 2000);
-    });
-  }
-
-  async function carregarDados() {
-    try {
-      // Dados do usuário
-      const rMe = await fetch("/api/me", { headers: HEADERS });
-      if (rMe.status === 401) { sair(); return; }
-      const me = await rMe.json();
-
-      document.getElementById("hdr-email").textContent = me.email || "—";
-      document.getElementById("link-afiliado").textContent = me.link || window.location.origin + "/a/" + me.affiliate;
-
-      document.getElementById("info-grid").innerHTML = `
-        <div class="info-row">
-          <span class="info-label">E-mail</span>
-          <span class="info-value">${me.email}</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">Chave Pix</span>
-          <span class="info-value">${me.pix_key}</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">Afiliado</span>
-          <span class="info-value">${me.affiliate}</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">Membro desde</span>
-          <span class="info-value">${fmtData(me.created_at)}</span>
-        </div>
-      `;
-
-      // Cliques
-      const rCliques = await fetch("/api/me/clicks", { headers: HEADERS });
-      const cliques  = await rCliques.json();
-      document.getElementById("c-cliques").textContent = cliques.total ?? 0;
-
-      // Pagamentos
-      const rPag = await fetch("/api/me/payments", { headers: HEADERS });
-      const pag  = await rPag.json();
-      const payments = pag.payments || [];
-
-      if (payments.length === 0) {
-        document.getElementById("tbody-pagamentos").innerHTML =
-          `<tr><td colspan="4"><div class="empty"><div class="icon">💳</div><p>Nenhum pagamento registrado ainda</p></div></td></tr>`;
-      } else {
-        document.getElementById("tbody-pagamentos").innerHTML = payments.map(p => `
-          <tr>
-            <td>${p.description || "—"}</td>
-            <td class="valor">${fmtMoeda(p.amount)}</td>
-            <td>
-              <span class="status-badge ${p.status}">
-                ${p.status === "pago" ? "✓ Pago" : "⏳ Pendente"}
-              </span>
-            </td>
-            <td>${fmtData(p.created_at)}</td>
-          </tr>
-        `).join("");
-
-        const totalPago = payments
-          .filter(p => p.status === "pago")
-          .reduce((s, p) => s + Number(p.amount), 0);
-        const totalPendente = payments
-          .filter(p => p.status === "pendente")
-          .reduce((s, p) => s + Number(p.amount), 0);
-
-        document.getElementById("c-recebido").textContent = fmtMoeda(totalPago);
-        document.getElementById("c-pendente").textContent = fmtMoeda(totalPendente);
-        document.getElementById("total-pago").textContent = fmtMoeda(totalPago);
-        document.getElementById("tfoot-total").style.display = "";
-      }
-
-    } catch (e) {
-      console.error("Erro ao carregar:", e);
-    }
-  }
-
-  carregarDados();
 </script>
+
 </body>
 </html>
